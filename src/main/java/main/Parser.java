@@ -2,6 +2,9 @@ package main;
 
 import cse332.exceptions.NotYetImplementedException;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class Parser {
 
     /**
@@ -10,7 +13,21 @@ public class Parser {
      * @return Adjacency list
      */
     public static Object parse(int[][] adjMatrix) {
-        throw new NotYetImplementedException();
+        // turn into array of hashmaps<vertex, edge cost>
+
+        ArrayList<HashMap<Integer, Integer>> adjList = new ArrayList<>();
+
+        for (int i = 0; i < adjMatrix.length; i++) {
+            adjList.add(new HashMap<Integer, Integer>());
+
+            for (int j = 0; j < adjMatrix[i].length; j++) {
+                if (adjMatrix[i][j] != Integer.MAX_VALUE) {
+                    adjList.get(i).put(j, adjMatrix[i][j]);
+                }
+            }
+        }
+
+        return adjList;
     }
 
     /**

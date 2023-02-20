@@ -10,7 +10,7 @@ import java.util.List;
 public class BellmanFordTest {
 
     /** change this line to test other solvers */
-    BellmanFordSolver s = new OutParallelLock();
+    BellmanFordSolver s = new OutSequential();
 
     static final int X = GraphUtil.INF;
 
