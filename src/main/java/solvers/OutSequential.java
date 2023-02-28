@@ -47,7 +47,6 @@ public class OutSequential implements BellmanFordSolver {
                 D2[v] = D1[v];
             }
 
-            // relaxing edges BFS style :)
             for (int v = 0; v < numVertices; v++) {
                 Set<Integer> neighbors = parsed.get(v).keySet();
                 Iterator<Integer> itr = neighbors.iterator();
