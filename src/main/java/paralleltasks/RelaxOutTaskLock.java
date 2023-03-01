@@ -1,6 +1,6 @@
 package paralleltasks;
 
-import cse332.exceptions.NotYetImplementedException;
+import java.util.concurrent.locks.ReentrantLock;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,33 +20,35 @@ public class RelaxOutTaskLock extends RecursiveAction {
     private int[] D2;
     private int[] P;
     private ArrayList<HashMap<Integer, Integer>> parsed;
+    private ReentrantLock[] locks;
 
-    public RelaxOutTaskLock(int lo, int hi, int[] D1, int[] D2, int[] P, ArrayList<HashMap<Integer, Integer>> parsed) {
+    public RelaxOutTaskLock(int lo, int hi, int[] D1, int[] D2, int[] P, ArrayList<HashMap<Integer, Integer>> parsed, ReentrantLock[] locks) {
         this.lo = lo;
         this.hi = hi;
         this.D1 = D1;
         this.D2 = D2;
         this.P = P;
         this.parsed = parsed;
+        this.locks = locks;
     }
 
     protected void compute() {
         if (hi-lo <= CUTOFF) {
-            sequential(lo, hi, D1, D2, P, parsed);
+            sequential(lo, hi, D1, D2, P, parsed, locks);
             return;
         }
 
         int mid = lo + (hi-lo)/2;
 
-        RelaxOutTaskBad left = new RelaxOutTaskBad(lo, mid, D1, D2, P, parsed);
-        RelaxOutTaskBad right = new RelaxOutTaskBad(mid, hi, D1, D2, P, parsed);
+        RelaxOutTaskLock left = new RelaxOutTaskLock(lo, mid, D1, D2, P, parsed, locks);
+        RelaxOutTaskLock right = new RelaxOutTaskLock(mid, hi, D1, D2, P, parsed, locks);
 
         left.fork();
         right.compute();
         left.join();
     }
 
-    public static void sequential(int lo, int hi, int[] D1, int[] D2, int[] P, ArrayList<HashMap<Integer, Integer>> parsed) {
+    public static void sequential(int lo, int hi, int[] D1, int[] D2, int[] P, ArrayList<HashMap<Integer, Integer>> parsed, ReentrantLock[] locks) {
         for (int v = lo; v < hi; v++) {
             Set<Integer> neighbors = parsed.get(v).keySet();
             Iterator<Integer> itr = neighbors.iterator();
@@ -62,15 +64,27 @@ public class RelaxOutTaskLock extends RecursiveAction {
                     edgeCost = D2[v]+cost;
                 }
 
-                if (D1[neighbor] > edgeCost) {
+                // ** critical section, lock neighbor
+                locks[v].lock();
+
+                if (edgeCost < D1[neighbor]) {
                     D1[neighbor] = edgeCost;
                     P[neighbor] = v;
                 }
+
+                locks[v].unlock();
+                // ** critical section
             }
         }
     }
 
     public static void parallel(int[] D1, int[] D2, int[] P, ArrayList<HashMap<Integer, Integer>> parsed) {
-        pool.invoke(new RelaxOutTaskBad( 0, D1.length, D1, D2, P, parsed));
+        ReentrantLock[] locks = new ReentrantLock[D1.length];
+
+        for (int i = 0; i < locks.length; i++) {
+            locks[i] = new ReentrantLock();
+        }
+
+        pool.invoke(new RelaxOutTaskLock( 0, D1.length, D1, D2, P, parsed, locks));
     }
 }
