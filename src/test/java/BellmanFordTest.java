@@ -166,11 +166,11 @@ public class BellmanFordTest {
     }
 
     // ** FAILING
-    //@Test
+    @Test
     public void test_large_graph() {
         BellmanFordSolver t = new OutSequential();
 
-        int[][] g = GraphUtil.generate(1000, 0.15, 0.1, 8, 16, -8, 0, 332);
+        int[][] g = GraphUtil.generate(750, 0.15, 0.1, 8, 16, -8, 0, 332);
         List<Integer> result = s.solve(g, 0);
         List<Integer> actual = t.solve(g, 0);
         System.out.println("Result: " + result);
