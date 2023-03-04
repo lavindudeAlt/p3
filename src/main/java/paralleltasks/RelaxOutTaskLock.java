@@ -65,14 +65,14 @@ public class RelaxOutTaskLock extends RecursiveAction {
                 }
 
                 // ** critical section, lock neighbor
-                locks[v].lock();
+                locks[neighbor].lock();
 
                 if (edgeCost < D1[neighbor]) {
                     D1[neighbor] = edgeCost;
                     P[neighbor] = v;
                 }
 
-                locks[v].unlock();
+                locks[neighbor].unlock();
                 // ** critical section
             }
         }

@@ -36,7 +36,21 @@ public class Parser {
      * @return Adjacency list with incoming edges
      */
     public static Object parseInverse(int[][] adjMatrix) {
-        throw new NotYetImplementedException();
+        ArrayList<HashMap<Integer, Integer>> adjList = new ArrayList<>();
+
+        int n = adjMatrix.length; // dimensions of this square matrix
+
+        for (int j = 0; j < n; j++) {
+            adjList.add(new HashMap<>());
+
+            for (int i = 0; i < n; i++) {
+                if (adjMatrix[i][j] != Integer.MAX_VALUE) {
+                    adjList.get(j).put(i, adjMatrix[i][j]);
+                }
+            }
+        }
+
+        return adjList;
     }
 
 }

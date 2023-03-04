@@ -10,7 +10,7 @@ import java.util.List;
 public class BellmanFordTest {
 
     /** change this line to test other solvers */
-    BellmanFordSolver s = new OutParallelLock();
+    BellmanFordSolver s = new InParallel();
 
     static final int X = GraphUtil.INF;
 
@@ -165,4 +165,16 @@ public class BellmanFordTest {
         return true;
     }
 
+    // ** FAILING
+    //@Test
+    public void test_large_graph() {
+        BellmanFordSolver t = new OutSequential();
+
+        int[][] g = GraphUtil.generate(1000, 0.15, 0.1, 8, 16, -8, 0, 332);
+        List<Integer> result = s.solve(g, 0);
+        List<Integer> actual = t.solve(g, 0);
+        System.out.println("Result: " + result);
+        System.out.println("Expected: " + actual);
+        Assertions.assertTrue(cycle_equals(actual, result));
+    }
 }
