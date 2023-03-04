@@ -7,7 +7,9 @@ import main.Parser;
 import paralleltasks.ArrayCopyTask;
 import paralleltasks.RelaxOutTaskBad;
 
-import java.util.*;
+import java.util.List;
+import java.util.HashMap;
+import java.util.ArrayList;
 
 public class OutParallelBad implements BellmanFordSolver {
     private void initializeArrays(int source, int[] D1, int[] D2, int[] P) {
